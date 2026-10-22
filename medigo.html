@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>CareLink – Find a doctor, book a slot</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&family=Instrument+Sans:wght@400;500;600&display=swap">
+<style>
+:root{--bg:#F2F6F7;--surf:#fff;--ink:#12303A;--mute:#5B7480;--line:#D5E1E5;--pri:#0A6B6B;--pri-ink:#fff;--soft:#DFF0EE;--live:#D6453D;--warn:#B7791F;--busy:#E8EDEF;
+color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);box-sizing:border-box}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0D1A1F;--surf:#14262D;--ink:#E6F0F2;--mute:#8FA7B0;--line:#26414A;--pri:#3FBFB4;--pri-ink:#07201F;--soft:#173A3B;--live:#FF6B63;--warn:#E3B04B;--busy:#1C323A;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0D1A1F;--surf:#14262D;--ink:#E6F0F2;--mute:#8FA7B0;--line:#26414A;--pri:#3FBFB4;--pri-ink:#07201F;--soft:#173A3B;--live:#FF6B63;--warn:#E3B04B;--busy:#1C323A;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.5 "Instrument Sans",system-ui,sans-serif}
+h1,h2,h3{font-family:"Bricolage Grotesque","Instrument Sans",system-ui,sans-serif;margin:0;line-height:1.15}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--pri);outline-offset:2px}
+.wrap{max-width:1040px;margin:0 auto;padding:0 18px}
+header{background:var(--surf);border-bottom:1px solid var(--line)}
+.top{display:flex;align-items:center;gap:20px;flex-wrap:wrap;padding:14px 0}
+.logo{font:700 24px "Bricolage Grotesque",sans-serif;color:var(--pri)}
+nav{display:flex;gap:4px;flex-wrap:wrap}
+nav button{background:none;border:0;padding:8px 14px;border-radius:8px;color:var(--mute);font-weight:500}
+nav button[aria-current=true]{background:var(--soft);color:var(--pri)}
+.ticker{background:var(--ink);color:var(--bg);font-size:14px;padding:7px 0}
+.ticker .wrap{display:flex;gap:10px;align-items:center}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--live);flex:none;animation:pulse 1.6s infinite}
+@keyframes pulse{50%{opacity:.25}}
+@media (prefers-reduced-motion:reduce){.dot{animation:none}}
+.hero{padding:34px 0 10px}
+.hero h1{font-size:clamp(30px,5vw,46px);max-width:16ch}
+.hero p{color:var(--mute);max-width:52ch;margin:10px 0 0}
+.filters{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:10px;margin:22px 0 8px}
+.filters input,.filters select,.f input,.f textarea{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surf)}
+.chk{display:flex;align-items:center;gap:8px;color:var(--mute);margin-bottom:14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:14px}
+.card{background:var(--surf);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:8px}
+.doc{display:flex;gap:12px;align-items:center}
+.av{width:46px;height:46px;border-radius:50%;background:var(--soft);color:var(--pri);display:grid;place-items:center;font:700 16px "Bricolage Grotesque",sans-serif;flex:none}
+.card h3{font-size:18px}.sub{color:var(--mute);font-size:14px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.star{color:var(--warn);font-weight:600}
+.pill{font-size:13px;padding:3px 10px;border-radius:99px;background:var(--soft);color:var(--pri);font-weight:600}
+.pill.none{background:var(--busy);color:var(--mute)}
+.btn{background:var(--pri);color:var(--pri-ink);border:0;border-radius:10px;padding:10px 16px;font-weight:600}
+.btn.ghost{background:none;color:var(--pri);border:1px solid var(--pri)}
+.btn.danger{background:none;color:var(--live);border:1px solid var(--live)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.days{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin:12px 0}
+.days button{border:1px solid var(--line);background:var(--surf);border-radius:10px;padding:8px 12px;white-space:nowrap}
+.days button[aria-pressed=true]{background:var(--pri);color:var(--pri-ink);border-color:var(--pri)}
+.slots{display:grid;grid-template-columns:repeat(auto-fill,minmax(78px,1fr));gap:8px}
+.slots button{border:1px solid var(--pri);background:var(--surf);color:var(--pri);border-radius:9px;padding:9px 0;font-weight:600}
+.slots button[aria-pressed=true]{background:var(--pri);color:var(--pri-ink)}
+.slots button:disabled{border-color:var(--line);background:var(--busy);color:var(--mute);text-decoration:line-through;cursor:not-allowed}
+.slots button.blocked{border-style:dashed;text-decoration:none}
+.flash{animation:fl 1.2s}@keyframes fl{0%{background:var(--live);color:#fff}}
+.ov{position:fixed;inset:0;background:rgba(5,20,25,.6);display:none;align-items:flex-start;justify-content:center;overflow:auto;padding:24px 12px;z-index:20}
+.ov.on{display:flex}
+.modal{background:var(--surf);border-radius:16px;max-width:640px;width:100%;padding:22px;border:1px solid var(--line)}
+.f{display:grid;gap:8px;margin-top:14px}
+.rev{border-top:1px solid var(--line);padding:10px 0}
+.empty{padding:36px 0;color:var(--mute);text-align:center}
+h2.sec{font-size:24px;margin:26px 0 14px}
+@media(max-width:720px){.filters{grid-template-columns:1fr 1fr}.filters input{grid-column:1/-1}}
+</style>
+</head>
+<body>
+<header><div class="wrap top"><div class="logo">CareLink</div>
+<nav id="nav"></nav></div></header>
+<div class="ticker" aria-live="polite"><div class="wrap"><span class="dot"></span><span id="tick">Live availability is on. Updates appear here as slots are taken.</span></div></div>
+<main class="wrap" id="main"></main>
+<div class="ov" id="ov"><div class="modal" id="modal" role="dialog" aria-modal="true"></div></div>
+
+<script>
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const TIMES=[];for(let h=9;h<15;h++)['00','30'].forEach(m=>TIMES.push(String(h).padStart(2,'0')+':'+m));
+const DAYS=5, HOSP=['Lakeview Medical Centre','Spice Coast Hospital','St. Mary’s Specialty Clinic'];
+let seed=7;const rnd=()=>(seed=(seed*16807)%2147483647)/2147483647;
+const mk=(id,name,spec,h,fee,yrs,revs)=>{const slots={};for(let d=0;d<DAYS;d++)TIMES.forEach(t=>{const r=rnd();slots[d+'|'+t]=r<.35?'booked':r<.42?'blocked':'free'});
+return{id,name,spec,h,fee,yrs,slots,reviews:revs.map(([n,s,t])=>({n,s,t}))}};
+const docs=[
+mk(1,'Dr. Anjali Menon','Cardiology',0,900,14,[['Rahul',5,'Explained my ECG clearly and took time with questions.'],['Sini',4,'Short wait, thorough check-up.']]),
+mk(2,'Dr. Arjun Pillai','Orthopaedics',1,700,11,[['Maya',5,'My knee is much better after the plan he gave.']]),
+mk(3,'Dr. Fatima Rahman','Paediatrics',2,500,9,[['Joby',5,'Great with kids. Our toddler was calm.'],['Priya',5,'Kind and patient.'],['Sunil',4,'Clinic runs on time.']]),
+mk(4,'Dr. Vikram Nair','Dermatology',0,600,8,[['Anu',4,'Clear treatment plan for my skin allergy.']]),
+mk(5,'Dr. Lakshmi Iyer','Gynaecology',1,800,16,[['Divya',5,'Comfortable and respectful consultations.']]),
+mk(6,'Dr. Thomas Mathew','General Medicine',2,400,20,[['Biju',4,'Reliable family doctor.'],['Neha',4,'Quick diagnosis.']]),
+mk(7,'Dr. Reshma Das','Neurology',1,1000,12,[['Karthik',5,'Took my migraines seriously.']]),
+mk(8,'Dr. Sameer Khan','ENT',0,550,7,[['Leena',3,'Good doctor, but the wait was long.']])
+];
+const SPECS=[...new Set(docs.map(d=>d.spec))].sort();
+let appts=[],aid=1,view='find',f={q:'',spec:'',hosp:'',sort:'soon',today:false},open=null,day=0,pick=null,deskDoc=1,deskDay=0,me='';
+
+const avg=d=>d.reviews.length?d.reviews.reduce((a,r)=>a+r.s,0)/d.reviews.length:0;
+const initials=n=>n.replace('Dr. ','').split(' ').map(x=>x[0]).join('');
+const dayLabel=i=>{const d=new Date();d.setDate(d.getDate()+i);return i===0?'Today':i===1?'Tomorrow':d.toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short'})};
+const isPast=(d,t)=>{if(d!==0)return false;const n=new Date();const[h,m]=t.split(':').map(Number);return h*60+m<=n.getHours()*60+n.getMinutes()};
+const st=(doc,d,t)=>isPast(d,t)?'past':doc.slots[d+'|'+t];
+const freeList=(doc,d)=>TIMES.filter(t=>st(doc,d,t)==='free');
+const nextFree=doc=>{for(let d=0;d<DAYS;d++){const l=freeList(doc,d);if(l.length)return{d,t:l[0]}}return null};
+const nf=doc=>{const n=nextFree(doc);return n?dayLabel(n.d)+' '+n.t:'No slots'};
+
+function grid(doc,d,mode){return '<div class="slots">'+TIMES.map(t=>{const s=st(doc,d,t);
+if(mode==='desk'){return `<button data-a="tog" data-t="${t}" ${s==='booked'||s==='past'?'disabled':''} class="${s==='blocked'?'blocked':''}" title="${s}">${t}${s==='blocked'?' ✕':''}</button>`}
+return `<button data-a="pick" data-t="${t}" ${s!=='free'?'disabled':''} aria-pressed="${pick===t}">${t}</button>`}).join('')+'</div>'}
+
+function renderNav(){const tabs=[['find','Find a doctor'],['mine','My appointments'],['hosp','Hospitals'],['desk','Doctor desk']];
+$('#nav').innerHTML=tabs.map(([k,l])=>`<button data-a="tab" data-k="${k}" aria-current="${view===k}">${l}${k==='mine'&&appts.filter(a=>a.s==='booked').length?' ('+appts.filter(a=>a.s==='booked').length+')':''}</button>`).join('')}
+
+function card(d){const free=freeList(d,0).length,r=avg(d);
+return `<article class="card"><div class="doc"><div class="av">${initials(d.name)}</div><div><h3>${d.name}</h3><div class="sub">${d.spec} · ${d.yrs} yrs</div></div></div>
+<div class="sub">${HOSP[d.h]}</div>
+<div class="row"><span class="star">★ ${r?r.toFixed(1):'New'} <span class="sub">(${d.reviews.length})</span></span><span>₹${d.fee}</span></div>
+<div class="row"><span class="pill ${free?'':'none'}">${free?free+' free today':'Full today'}</span><span class="sub">Next: ${nf(d)}</span></div>
+<button class="btn" data-a="open" data-id="${d.id}">View slots</button></article>`}
+
+function renderFind(){let l=docs.filter(d=>(!f.q||(d.name+d.spec+HOSP[d.h]).toLowerCase().includes(f.q.toLowerCase()))&&(!f.spec||d.spec===f.spec)&&(f.hosp===''||d.h==f.hosp)&&(!f.today||freeList(d,0).length));
+l.sort((a,b)=>f.sort==='rate'?avg(b)-avg(a):f.sort==='fee'?a.fee-b.fee:((nextFree(a)?.d??9)*100+TIMES.indexOf(nextFree(a)?.t))-((nextFree(b)?.d??9)*100+TIMES.indexOf(nextFree(b)?.t)));
+return `<section class="hero"><h1>See the right doctor, at a time that’s actually free.</h1><p>Search doctors across hospitals, check live availability and book in a few taps.</p>
+<div class="filters"><input id="q" type="search" placeholder="Search by doctor, specialty or hospital" value="${esc(f.q)}" aria-label="Search">
+<select id="spec" aria-label="Specialty"><option value="">All specialties</option>${SPECS.map(s=>`<option ${f.spec===s?'selected':''}>${s}</option>`).join('')}</select>
+<select id="hosp" aria-label="Hospital"><option value="">All hospitals</option>${HOSP.map((h,i)=>`<option value="${i}" ${f.hosp==i&&f.hosp!==''?'selected':''}>${h}</option>`).join('')}</select>
+<select id="sort" aria-label="Sort"><option value="soon" ${f.sort==='soon'?'selected':''}>Soonest available</option><option value="rate" ${f.sort==='rate'?'selected':''}>Top rated</option><option value="fee" ${f.sort==='fee'?'selected':''}>Lowest fee</option></select></div>
+<label class="chk"><input type="checkbox" id="today" ${f.today?'checked':''}> Only doctors with free slots today</label></section>
+<div class="grid" id="list">${l.length?l.map(card).join(''):'<div class="empty">No doctors match. Clear a filter to see more.</div>'}</div>`}
+
+function renderMine(){if(!appts.length)return '<div class="empty"><h2 class="sec">No appointments yet</h2>Book a slot from Find a doctor and it will show up here.</div>';
+return '<h2 class="sec">My appointments</h2><div class="grid">'+[...appts].reverse().map(a=>{const d=docs.find(x=>x.id===a.doc);
+return `<article class="card"><h3>${d.name}</h3><div class="sub">${d.spec} · ${HOSP[d.h]}</div><div><b>${dayLabel(a.d)}, ${a.t}</b> · ${esc(a.name)}</div>
+<div class="row"><span class="pill ${a.s==='booked'?'':'none'}">${a.s==='booked'?'Confirmed':'Cancelled'}</span>
+${a.s==='booked'?`<span><button class="btn ghost" data-a="rv" data-id="${d.id}">Review</button> <button class="btn danger" data-a="cancel" data-id="${a.id}">Cancel</button></span>`:''}</div></article>`}).join('')+'</div>'}
+
+function renderHosp(){return '<h2 class="sec">Hospitals</h2><div class="grid">'+HOSP.map((h,i)=>{const ds=docs.filter(d=>d.h===i);const free=ds.reduce((a,d)=>a+freeList(d,0).length,0);
+return `<article class="card"><h3>${h}</h3><div class="sub">${ds.length} doctors · ${[...new Set(ds.map(d=>d.spec))].join(', ')}</div><span class="pill ${free?'':'none'}">${free} free slots today</span>
+<button class="btn ghost" data-a="hf" data-i="${i}">See doctors</button></article>`}).join('')+'</div>'}
+
+function renderDesk(){const d=docs.find(x=>x.id===deskDoc);const mine=appts.filter(a=>a.doc===d.id&&a.s==='booked');
+const booked=TIMES.filter(t=>st(d,deskDay,t)==='booked').length;
+return `<h2 class="sec">Doctor desk</h2><p class="sub">Manage availability for a doctor. Tap a free slot to block it (leave, surgery) and tap again to reopen. Patients see changes instantly.</p>
+<select id="deskdoc" aria-label="Doctor" style="padding:10px;border-radius:10px;border:1px solid var(--line);background:var(--surf)">${docs.map(x=>`<option value="${x.id}" ${x.id===deskDoc?'selected':''}>${x.name} – ${x.spec}</option>`).join('')}</select>
+<div class="days" id="deskdays">${Array.from({length:DAYS},(_,i)=>`<button data-a="dday" data-d="${i}" aria-pressed="${deskDay===i}">${dayLabel(i)}</button>`).join('')}</div>
+<div class="card"><div class="row"><b>${dayLabel(deskDay)}</b><span class="sub">${booked} booked · ${freeList(d,deskDay).length} free</span></div><div id="deskgrid">${grid(d,deskDay,'desk')}</div></div>
+<h2 class="sec" style="font-size:19px">Appointments made in this session</h2>${mine.length?mine.map(a=>`<div class="rev">${dayLabel(a.d)} ${a.t} · ${esc(a.name)}</div>`).join(''):'<div class="sub">None yet.</div>'}`}
+
+function render(){renderNav();$('#main').innerHTML=view==='find'?renderFind():view==='mine'?renderMine():view==='hosp'?renderHosp():renderDesk()}
+
+function modalHTML(d){const can=appts.some(a=>a.doc===d.id&&a.s==='booked'),r=avg(d);
+return `<div class="row"><div class="doc"><div class="av">${initials(d.name)}</div><div><h2>${d.name}</h2><div class="sub">${d.spec} · ${HOSP[d.h]} · ₹${d.fee}</div></div></div><button class="btn ghost" data-a="close" aria-label="Close">Close</button></div>
+<p class="star">★ ${r?r.toFixed(1):'New'} <span class="sub">from ${d.reviews.length} review${d.reviews.length===1?'':'s'}</span></p>
+<h3 style="font-size:17px"><span class="dot" style="display:inline-block;margin-right:6px"></span>Live availability</h3>
+<div class="days">${Array.from({length:DAYS},(_,i)=>`<button data-a="day" data-d="${i}" aria-pressed="${day===i}">${dayLabel(i)} (${freeList(d,i).length})</button>`).join('')}</div>
+<div id="mslots"></div>
+<div class="f"><input id="pname" placeholder="Patient name" value="${esc(me)}" aria-label="Patient name"><button class="btn" data-a="book" id="bookbtn">Book appointment</button><div class="sub" id="msg">Choose a slot to continue.</div></div>
+<h3 style="font-size:17px;margin-top:20px">Patient reviews</h3><div id="revs"></div>
+<div class="f" id="rform">${can?`<select id="rs" aria-label="Rating"><option value="5">★★★★★ Excellent</option><option value="4">★★★★ Good</option><option value="3">★★★ Okay</option><option value="2">★★ Poor</option><option value="1">★ Bad</option></select><textarea id="rt" rows="2" placeholder="Share how your visit went"></textarea><button class="btn ghost" data-a="rate">Post review</button>`:'<div class="sub">Reviews open once you have a booked appointment with this doctor.</div>'}</div>`}
+function refreshModal(){if(!open)return;const d=docs.find(x=>x.id===open);$('#mslots').innerHTML=grid(d,day,'book');
+document.querySelectorAll('.days [data-a=day]').forEach((b,i)=>b.textContent=`${dayLabel(i)} (${freeList(d,i).length})`);
+$('#revs').innerHTML=d.reviews.length?d.reviews.slice().reverse().map(r=>`<div class="rev"><b>${esc(r.n)}</b> <span class="star">${'★'.repeat(r.s)}</span><div>${esc(r.t)}</div></div>`).join(''):'<div class="sub">No reviews yet.</div>'}
+function openDoc(id){open=id;pick=null;const n=nextFree(docs.find(x=>x.id===id));day=n?n.d:0;$('#modal').innerHTML=modalHTML(docs.find(x=>x.id===id));refreshModal();$('#ov').classList.add('on')}
+function closeM(){open=null;$('#ov').classList.remove('on');render()}
+const msg=t=>{const m=$('#msg');if(m)m.textContent=t};
+
+document.addEventListener('click',e=>{const b=e.target.closest('[data-a]');if(!b){if(e.target.id==='ov')closeM();return}
+const a=b.dataset.a,doc=()=>docs.find(x=>x.id===open);
+if(a==='tab'){view=b.dataset.k;render()}
+else if(a==='open')openDoc(+b.dataset.id)
+else if(a==='close')closeM()
+else if(a==='day'){day=+b.dataset.d;pick=null;document.querySelectorAll('.days [data-a=day]').forEach((x,i)=>x.setAttribute('aria-pressed',i===day));refreshModal()}
+else if(a==='pick'){pick=b.dataset.t;refreshModal();msg(`Selected ${dayLabel(day)} at ${pick}.`)}
+else if(a==='book'){const d=doc(),name=$('#pname').value.trim();if(!pick)return msg('Choose a time slot first.');if(!name)return msg('Enter the patient name to book.');
+if(st(d,day,pick)!=='free'){pick=null;refreshModal();return msg('Sorry, that slot was just taken. Pick another time.')}
+me=name;d.slots[day+'|'+pick]='booked';appts.push({id:aid++,doc:d.id,d:day,t:pick,name,s:'booked'});msg(`Booked with ${d.name}, ${dayLabel(day)} at ${pick}. View it under My appointments.`);pick=null;refreshModal();renderNav();const nm=$('#pname').value,mm=$('#msg').textContent;$('#modal').innerHTML=modalHTML(d);$('#pname').value=nm;refreshModal();msg(mm)}
+else if(a==='cancel'){const x=appts.find(z=>z.id==b.dataset.id);if(!confirm('Cancel this appointment? The slot will be released for other patients.'))return;x.s='cancelled';docs.find(d=>d.id===x.doc).slots[x.d+'|'+x.t]='free';tick(`Slot released: ${docs.find(d=>d.id===x.doc).name}, ${dayLabel(x.d)} ${x.t}`);render()}
+else if(a==='rv'){openDoc(+b.dataset.id)}
+else if(a==='rate'){const d=doc();const t=$('#rt').value.trim();if(!t)return;d.reviews.push({n:me||'Patient',s:+$('#rs').value,t});$('#rt').value='';refreshModal()}
+else if(a==='hf'){f={q:'',spec:'',hosp:b.dataset.i,sort:'soon',today:false};view='find';render()}
+else if(a==='dday'){deskDay=+b.dataset.d;render()}
+else if(a==='tog'){const d=docs.find(x=>x.id===deskDoc),k=deskDay+'|'+b.dataset.t;if(d.slots[k]==='free')d.slots[k]='blocked';else if(d.slots[k]==='blocked')d.slots[k]='free';render()}
+});
+document.addEventListener('input',e=>{if(e.target.id==='q'){f.q=e.target.value;$('#list').outerHTML=renderFind().match(/<div class="grid" id="list">[\s\S]*<\/div>$/)[0]}});
+document.addEventListener('change',e=>{const i=e.target.id;if(i==='spec')f.spec=e.target.value;else if(i==='hosp')f.hosp=e.target.value;else if(i==='sort')f.sort=e.target.value;else if(i==='today')f.today=e.target.checked;else if(i==='deskdoc')deskDoc=+e.target.value;else return;render()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&open)closeM()});
+
+function tick(t){$('#tick').textContent=t}
+// Simulated live feed: other patients booking slots in real time.
+setInterval(()=>{const d=docs[Math.floor(Math.random()*docs.length)],dd=Math.floor(Math.random()*DAYS),l=freeList(d,dd);if(!l.length)return;
+const t=l[Math.floor(Math.random()*l.length)];d.slots[dd+'|'+t]='booked';tick(`Just booked: ${d.name}, ${dayLabel(dd)} at ${t}`);
+if(open){if(open===d.id){if(dd===day&&pick===t){pick=null;msg(`${t} was just taken by someone else. Pick another slot.`)}refreshModal();const s=document.querySelector(`#mslots [data-t="${t}"]`);if(s&&dd===day)s.classList.add('flash')}}
+else if(view==='find'&&document.activeElement.tagName!=='INPUT'&&document.activeElement.tagName!=='SELECT')render();
+else if(view==='hosp'||view==='desk'&&document.activeElement.tagName!=='SELECT')render()},6000);
+render();
+</script>
+</body>
+</html>
